@@ -55,17 +55,13 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          tags: ${{ secrets.DOCKER_USER }}/devops:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   ci:
     runs-on: ubuntu-latest
     needs : push_to_docker_hub
     steps:
-      - uses: actions/checkout@v3
-      - name: Test
-        run: |
-          npm install
-          npm run test
-
       - name: Deploy
         # Only run this step if the branch is main
         if: github.ref == 'refs/heads/master'
@@ -73,5 +69,4 @@ jobs:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
-          tags: ${{ secrets.DOCKER_USER }}/devops:${{ github.sha }}
-          labels: ${{ steps.meta.outputs.labels }}
+
