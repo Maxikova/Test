@@ -1,3 +1,20 @@
+/* const express = require('express');
+const app = express();
+
+// Ruta raíz
+app.get('/', (req, res) => {
+  res.status(200).send('Server is running');
+});
+
+// No usar process.exit(), simplemente cerramos el servidor si es necesario
+function closeServer() {
+  // Lógica para cerrar el servidor, si tienes una referencia del servidor
+  // por ejemplo si haces algo como: const server = app.listen(...)
+  // entonces podrías hacer: server.close();
+}
+
+module.exports = { app, closeServer }; */
+
 const express = require('express');
 const app = express();
 
@@ -6,10 +23,4 @@ app.get('/', (req, res) => {
   res.status(200).send('Server is running');
 });
 
-// Opcional: función para cerrar el servidor
-function closeServer() {
-  // Lógica para cerrar el servidor si es necesario
-  process.exit(0); // Puedes adaptar esta lógica según cómo inicies tu servidor
-}
-
-module.exports = { app, closeServer };
+module.exports = { app };  // Solo exportamos app
