@@ -1,10 +1,9 @@
 // Lo usas a app
-const app = require('./app');
+const express = require('express');
+const app = express();
 
-async function main(){
+app.get('/', (req, res) => {
+  res.status(200).send('Server is running');
+});
 
-    app.listen(3000);
-    console.log('Server is running');
-}
-
-main();
+module.exports = { app };

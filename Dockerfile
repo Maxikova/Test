@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20
 
 WORKDIR /app #En donde va aestar 
 
@@ -8,4 +8,4 @@ RUN npm ci --only=production
 
 COPY . .
 
-CMD ["npm","start"]
+CMD ["npm","script"]
