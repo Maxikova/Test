@@ -1,10 +1,15 @@
 const express = require('express');
-const morgan = require('morgan');
-const app = express(); 
+const app = express();
 
-app.use(morgan('dev')); // Metodo dev es para ver mensajes cortos
+// Ruta raíz
+app.get('/', (req, res) => {
+  res.status(200).send('Server is running');
+});
 
-app.use(require('./routes/index'));
+// Opcional: función para cerrar el servidor
+function closeServer() {
+  // Lógica para cerrar el servidor si es necesario
+  process.exit(0); // Puedes adaptar esta lógica según cómo inicies tu servidor
+}
 
-module.exports = app;
-//Configuras APP
+module.exports = { app, closeServer };

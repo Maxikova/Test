@@ -1,6 +1,6 @@
 const test = require('ava');
 const request = require('supertest');
-const { app, closeServer } = require('./app');
+const { app, closeServer } = require('./src/app');
 
 // Cerrar el servidor al final de las pruebas
 test.after.always(async t => {
