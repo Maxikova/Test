@@ -1,11 +1,18 @@
-FROM node:18
+FROM node:18.17.1 as build
 
-WORKDIR /app #En donde va aestar 
+WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci --only=production
 
 COPY . .
 
-CMD ["npm","start"]
+FROM node:18.17.1
+
+WORKDIR /app
+
+COPY --from=build /app .
+
+
+CMD node index.js
