@@ -17,4 +17,4 @@ WORKDIR /app
 COPY --from=build /app .
 
 
-CMD node /src/index.js
+CMD node ./src/index.js
