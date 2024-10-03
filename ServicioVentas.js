@@ -15,7 +15,7 @@ class ServicioVentas {
             if (ventas) {
                 resolve(ventas);
             } else {
-                reject(`Numero de venta no encontrado`);
+                reject(`Numero de ventas no encontradoss`);
             }
         });
     }
