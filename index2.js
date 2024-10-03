@@ -1,5 +1,5 @@
 const express = require('express');
-const servicioVinos = require('.ServicioVinos');
+const servicioVinos = require('./ServicioVinos');
 const ServicioClientes = require('./ServicioClientes');
 //const ServicioEmpleados = require('./Entidades/ServicioEmpleados');
 const ServicioVentas = require('./ServicioVentas');
