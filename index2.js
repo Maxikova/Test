@@ -54,7 +54,7 @@ app.post('/v1/vinos', async (req, res) => {
         return res.status(400).send('Faltan datos del vino');
     }
     let nuevoVino = await servicioVinos.add(req.query); 
-    res.status(201).send("Vino creado correctamente");
+    res.status(201).send("Vino creados correctamente");
 });
 
 // Actualizar un vino
