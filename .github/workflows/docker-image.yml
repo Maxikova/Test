@@ -35,3 +35,5 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USER }}/devops:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
+
+        
