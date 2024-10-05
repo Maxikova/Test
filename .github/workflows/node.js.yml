@@ -69,7 +69,7 @@ jobs:
     needs : push_to_docker_hub
     steps:
       - name: Deploy
-        # Only run this step if the branch is main
+        # Only run this step if the branch is mainq
         if: github.ref == 'refs/heads/master'
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=docker.io/maxikova/devops:${{ github.sha }}
