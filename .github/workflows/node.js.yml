@@ -29,6 +29,10 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
+    - name: Start server
+      run: npm start &
+    - name: Wait for server to be ready
+      run: sleep 5 # Espera 5 segundos para dar tiempo a que el servidor esté listo
     - name: Run Tests
       run: npm test test.js
 
