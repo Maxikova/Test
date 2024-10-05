@@ -8,7 +8,10 @@ const moment = require('moment');
 const app = express();
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
 app.use(express.json());
+
+app.use(cors());
 
 const swaggerOptions = {
     swaggerDefinition: {
