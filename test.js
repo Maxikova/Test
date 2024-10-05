@@ -10,7 +10,7 @@ test.after.always(async t => {
 test('GET / - Verifico que el servidor funcione y responda con un 200', async t => {
   const response = await request(server).get('/');
   t.is(response.status, 200);
-  t.is(response.text, 'Server is running');
+  t.is(response.text, 'Server is running on port 3000');
 });
 
 // Test para obtener los vinos
