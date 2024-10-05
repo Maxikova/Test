@@ -18,35 +18,6 @@ class ServicioVinos {
         });
     }
 
-    // Busca vinos en base al criterio (nombre, bodega, año, precio)
-    filterVinos(consulta_vinos) {
-        return new Promise(resolve => {
-            const { nombre, bodega, año, precio } = consulta_vinos;
-
-            let resultados = this._vinos;
-
-            if (nombre) {
-                const nombres = nombre.split(',').map(n => n.trim().toLowerCase());
-                resultados = resultados.filter(v => nombres.includes(v.nombre.toLowerCase()));
-            }
-
-            if (bodega) {
-                const bodegas = bodega.split(',').map(b => b.trim().toLowerCase());
-                resultados = resultados.filter(v => bodegas.includes(v.bodega.toLowerCase()));
-            }
-
-            if (año) {
-                resultados = resultados.filter(v => v.año === parseInt(año));
-            } 
-
-            if (precio) {
-                resultados = resultados.filter(v => v.precio === parseInt(precio));
-            }
-
-            resolve(resultados);
-        });
-    }
-
     // Como obtener vino por ID
     getById(id) {
         return new Promise((resolve, reject) => {
