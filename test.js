@@ -20,16 +20,16 @@ test('GET /v1/vinos - Obtengo todos los vinos', async t => {
   t.true(Array.isArray(response.body));
 });
 
-// // Test obtiene un ID de vino
-// test('GET /v1/vinos/:id - Otbengo un vino por ID', async t => {
-//   const response = await request(server).get('/v1/vinos/1');
-//   t.is(response.status, 200);
-//   t.is(response.body.id, 1);
-// });
+// Test obtiene un ID de vino
+test('GET /v1/vinos/:id - Otbengo un vino por ID', async t => {
+  const response = await request(server).get('/v1/vinos/1');
+  t.is(response.status, 200);
+  t.is(response.body.id, 1);
+});
 
-// //Test de obtener clientes y devuelve un array.
-// test('GET /v1/clientes - Obtener todos los clientes', async t => {
-//   const response = await request(server).get('/v1/clientes');
-//   t.is(response.status, 200);
-//   t.true(Array.isArray(response.body)); 
-// });
+//Test de obtener clientes y devuelve un array.
+test('GET /v1/clientes - Obtener todos los clientes', async t => {
+  const response = await request(server).get('/v1/clientes');
+  t.is(response.status, 200);
+  t.true(Array.isArray(response.body)); 
+});
