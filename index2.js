@@ -10,6 +10,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
 app.use(express.json());
+require('newrelic');
 
 app.use(cors());
 
