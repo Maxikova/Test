@@ -40,10 +40,10 @@ const swaggerOptions = {
 
 //Endpoint generico, el primero
 
-app.use((req, res, next) => {
-    console.log(req.method, req.path);
-    next();
+app.get('/', (req, res) => {
+    res.status(200).send('Server is running on port 3000');
 });
+
 
 ///Endpoints para el manejo de los vinos
 
@@ -233,8 +233,8 @@ app.put('/v1/vinos/:id', async (req, res) => {
  */
 app.delete('/v1/vinos/:id', async (req, res) => {
     try {
-        let vinos = await service.deleteById(req.params.id);
-        res.json(vinos);
+        let vinos = await servicioVinos.deleteById(req.params.id);
+        res.status(204).json(vinos);
     } catch (error) {
         res.status(404).send('Vino no encontrado');
     }
@@ -367,7 +367,7 @@ app.get('/v1/ventas/:id' , async(req,res) =>{
 });
 
 const PORT = 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
