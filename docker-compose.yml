@@ -8,3 +8,18 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - NEW_RELIC_LICENSE_KEY=01d31d427c167879fc2c693ab8d7f305FFFFNRAL
+  agent:
+    container_name: newrelic-infra
+    build:
+      context: .
+      dockerfile: newrelic-infra.dockerfile
+    cap_add:
+      - SYS_PTRACE
+    network_mode: host
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped

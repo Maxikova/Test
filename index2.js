@@ -368,7 +368,7 @@ app.get('/v1/ventas/:id' , async(req,res) =>{
 
 const PORT = 3000;
 const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`La API esta corriendo en el puerto ${PORT}`);
 });
 
 module.exports = server;
