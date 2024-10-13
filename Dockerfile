@@ -1,5 +1,5 @@
 # Dockerfile
-
+#Construyo el Build
 FROM node:18.17.1 as build
 
 WORKDIR /app
@@ -10,7 +10,8 @@ RUN npm ci --only=production
 
 COPY . .
 
-FROM node:18.17.1
+#Ejecucción del Build. La imagen final es mas limpia
+FROM node:18.17.1 
 
 WORKDIR /app
 
