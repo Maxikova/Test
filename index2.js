@@ -1,52 +1,31 @@
-const express = require('express');
+//Entidades
 const servicioVinos = require('./ServicioVinos');
 const ServicioClientes = require('./ServicioClientes');
-//const ServicioEmpleados = require('./Entidades/ServicioEmpleados');
 const ServicioVentas = require('./ServicioVentas');
-const wrap = require('co-express');
-const moment = require('moment');
+
+//Librerias
+const express = require('express');
 const app = express();
-const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
-app.use(express.json());
+
+//Newrelic
 require('newrelic');
 
+//Variables Swagger
+const swaggerInfo = require('./SwaggerInfo');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = swaggerJSDoc(swaggerInfo);
+
+app.use(express.json());
 app.use(cors());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-const swaggerOptions = {
-    swaggerDefinition: {
-      openapi: '3.0.0',
-      info: {
-        title: 'API de mi Vinoteca',
-        version: '1.0.0',
-        description: 'Documentación de la API para la gestión de vinos, clientes y ventas de la vinoteca',
-        contact: {
-          name: 'Vinos Finos',
-          email: 'info@vinosfinos.com'
-        }
-      },
-      servers: [
-        {
-          url: 'http://localhost:3000',
-          description: 'Servidor de desarrollo'
-        }
-      ]
-    },
-    apis: ['./index2.js']
-  };
 
-  const swaggerDocs = swaggerJSDoc(swaggerOptions);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-//Endpoint generico, el primero
-
+//Endpoint generico
 app.get('/', (req, res) => {
-    res.status(200).send('Server is running on port 3000');
+    res.status(200).send('La API esta corriendo en el puerto 3000');
 });
-
-
-///Endpoints para el manejo de los vinos
 
 // Obtener todos los vinos
 
@@ -81,7 +60,6 @@ app.get('/v1/vinos', async (req, res) => {
     let vinos = await servicioVinos.getAll();
     res.json(vinos);
 });
-
 
 /**
  * @swagger
@@ -155,6 +133,7 @@ app.get('/v1/vinos/:id', async (req, res) => {
  *       400:
  *         description: Faltan datos del vino
  */
+
 app.post('/v1/vinos', async (req, res) => {
     const {marca, bodega, año, precio} = req.query;
     if (!marca || !bodega || !año || !precio)
@@ -241,9 +220,6 @@ app.delete('/v1/vinos/:id', async (req, res) => {
     }
 });
 
-
-///Endpoints para el manejo de los clientes
-
 // Obtener todos los clientes
 /**
  * @swagger
@@ -314,6 +290,31 @@ app.get('/v1/clientes/:id', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /v1/clientes:
+ *   post:
+ *     summary: Crear un nuevo cliente
+ *     tags: [Clientes]
+ *     parameters:
+ *       - in: query
+ *         name: nombre
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Nombre del cliente
+ *       - in: query
+ *         name: sexo
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Sexo del cliente
+ *     responses:
+ *       201:
+ *         description: Cliente creado correctamente
+ *       400:
+ *         description: Faltan datos del cliente
+ */
 
 app.post('/v1/clientes', async (req, res) => {
     const {nombre, sexo} = req.query;
@@ -324,6 +325,38 @@ app.post('/v1/clientes', async (req, res) => {
     let nuevoCliente = await ServicioClientes.add(req.query); 
     res.status(201).send("Cliente creado correctamente");
 });
+
+
+/**
+ * @swagger
+ * /v1/clientes/{id}:
+ *   put:
+ *     summary: Actualizar un cliente
+ *     tags: [Clientes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del cliente
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               sexo:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Cliente actualizado correctamente
+ *       404:
+ *         description: Cliente no encontrado
+ */
 
 // Actualizar datos de un cliente
 app.put('/v1/clientes/:id', async (req, res) => {
@@ -337,6 +370,26 @@ app.put('/v1/clientes/:id', async (req, res) => {
 });
 
 // Eliminar un cliente por ID
+
+/**
+ * @swagger
+ * /v1/clientes/{id}:
+ *   delete:
+ *     summary: Eliminar un cliente
+ *     tags: [Clientes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del cliente
+ *     responses:
+ *       200:
+ *         description: Cliente eliminado correctamente
+ *       404:
+ *         description: Cliente no encontrado
+ */
 app.delete('/v1/clientes/:id', async (req, res) => {
     try {
         let clientes = await service.deleteById(req.params.id);
@@ -349,12 +402,70 @@ app.delete('/v1/clientes/:id', async (req, res) => {
 });
 
 // Obtener todas las ventas
+/**
+ * @swagger
+ * /v1/ventas:
+ *   get:
+ *     summary: Obtener todas las ventas
+ *     tags: [Ventas]
+ *     responses:
+ *       200:
+ *         description: Lista de ventas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   clienteId:
+ *                     type: integer
+ *                   total:
+ *                     type: number
+ *                     format: float
+ */
+
 app.get('/v1/ventas', async (req, res) => {
     let ventas = await ServicioVentas.getAll();
     res.json(ventas);
 });
 
 //Obtener venta por ID
+
+/**
+ * @swagger
+ * /v1/ventas/{id}:
+ *   get:
+ *     summary: Obtener una venta por ID
+ *     tags: [Ventas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la venta
+ *     responses:
+ *       200:
+ *         description: Detalles de la venta
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 clienteId:
+ *                   type: integer
+ *                 total:
+ *                   type: number
+ *                   format: float
+ *       404:
+ *         description: Venta no encontrada
+ */
+
 app.get('/v1/ventas/:id' , async(req,res) =>{
     try{
         let ventas = await ServicioVentas.getById(req.params.id);
@@ -366,6 +477,31 @@ app.get('/v1/ventas/:id' , async(req,res) =>{
     }
 
 });
+
+//Agregar Ventas
+app.post('/v1/ventas', async(req, res) => {
+    const { id_cliente, id_vino} = req.body;
+    let vinos;
+    if (!id_vino || !id_cliente) {
+        return res.status(400).send('No estan todos los datos para concretar la venta');
+    }
+  
+    try {
+      vinos = await servicioVinos.getById(id);
+      await ServicioClientes.getByDNI(dni);
+        // Agregar la venta a la lista de ventas
+  
+      let vinos = ServicioVentas.addVenta(id_vino,id_cliente)
+  
+      // Eliminar el vehículo de la lista de vehículos disponibles
+    await servicioVinos.deleteById(id_vino);
+    res.status(201).send('Se registró la venta');
+
+    } catch(error) {
+      console.log(error);
+      res.status(404).send('ID de vino o ID de cliente no encontrado');
+    }
+  });
 
 const PORT = 3000;
 const server = app.listen(PORT, () => {
