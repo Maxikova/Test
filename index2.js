@@ -487,14 +487,14 @@ app.post('/v1/ventas', async(req, res) => {
     }
   
     try {
-      vinos = await servicioVinos.getById(id);
-      await ServicioClientes.getByDNI(dni);
+      vinos = await servicioVinos.getById(id_vino);
+      await ServicioClientes.getByDNI(id_cliente);
         // Agregar la venta a la lista de ventas
   
       let vinos = ServicioVentas.addVenta(id_vino,id_cliente)
   
       // Eliminar el vehículo de la lista de vehículos disponibles
-    await servicioVinos.deleteById(id_vino);
+   // await servicioVinos.deleteById(id_vino);
     res.status(201).send('Se registró la venta');
 
     } catch(error) {
