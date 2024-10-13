@@ -20,11 +20,26 @@ class ServicioVentas {
         });
     }
 
-    //Crear funcion para que muestre las ventas que se le hicieron a determinado cliente
-
-
-    //Crear función de nueva venta hecha de tal vino
-
+    addVenta(id_cliente, id_vino) {
+        return new Promise((resolve, reject) => {
+            if (!id_cliente || !id_vino) {
+                return reject(new Error('Faltan datos para agregar la venta'));
+            }
+    
+            const nueva_venta = {
+                id: this._ventas.length ? this._ventas[this._ventas.length - 1].id + 1 : 1,
+                id_cliente,
+                id_vino,
+                fecha_venta: new Date().toISOString()
+            };
+    
+            // Agregar la nueva venta al array
+            this._ventas.push(nueva_venta);
+    
+            // Resolver la promesa con la nueva lista de ventas
+            resolve(this._ventas);
+        });
+    }
 
     deleteById(id) {
         return new Promise((resolve, reject) => {
