@@ -36,10 +36,11 @@ class ServicioVentas {
             // Agregar la nueva venta al array
             this._ventas.push(nueva_venta);
     
-            // Resolver la promesa con la nueva lista de ventas
-            resolve(this._ventas);
+            // Resolver la promesa con la nueva venta
+            resolve(nueva_venta); // Solo devuelve la nueva venta
         });
     }
+    
 
     deleteById(id) {
         return new Promise((resolve, reject) => {
