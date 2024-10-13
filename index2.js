@@ -495,7 +495,7 @@ app.post('/v1/ventas', async (req, res) => {
             return res.status(404).send('ID de vino no encontrado');
         }
 
-        const cliente = await ServicioClientes.getByDNI(id_cliente);
+        const cliente = await ServicioClientes.getById(id_cliente);
         if (!cliente) {
             return res.status(404).send('ID de cliente no encontrado');
         }
