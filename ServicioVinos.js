@@ -18,6 +18,35 @@ class ServicioVinos {
         });
     }
 
+    // Busca vinos en base al criterio (nombre, bodega, año, precio)
+    filterVinos(consulta_vinos) {
+        return new Promise(resolve => {
+            const { nombre, bodega, año, precio } = consulta_vinos;
+
+            let resultados = this._vinos;
+
+            if (nombre) {
+                const nombres = nombre.split(',').map(n => n.trim().toLowerCase());
+                resultados = resultados.filter(v => nombres.includes(v.nombre.toLowerCase()));
+            }
+
+            if (bodega) {
+                const bodegas = bodega.split(',').map(b => b.trim().toLowerCase());
+                resultados = resultados.filter(v => bodegas.includes(v.bodega.toLowerCase()));
+            }
+
+            if (año) {
+                resultados = resultados.filter(v => v.año === parseInt(año));
+            } 
+
+            if (precio) {
+                resultados = resultados.filter(v => v.precio === parseInt(precio));
+            }
+
+            resolve(resultados);
+        });
+    }
+
     // Como obtener vino por ID
     getById(id) {
         return new Promise((resolve, reject) => {
@@ -67,24 +96,19 @@ class ServicioVinos {
         });
     }
 
-    // Eliminar vino por ID
-    deleteById(id) {
-        return new Promise((resolve, reject) => {
-            const index = this._vinos.findIndex(v => v.id == id);
-    
-            if (index !== -1) {
-                this._vinos.splice(index, 1); // Elimino el vino
-                resolve(); 
-            } else {
-                reject('Vino no encontrado');
-            }
-        });
-
-        //this._vinos = this._vinos.filter(c => c.id !== req.params.id);
-    }
-
-    
-    
+    //Elimina el vino
+        deleteById(id) {
+            return new Promise((resolve, reject) => {
+                const index = this._vinos.findIndex(v => v.id === id); // Busca el vino
+        
+                if (index !== -1) {
+                    this._vinos.splice(index, 1); // Elimina el vino
+                    resolve(); 
+                } else {
+                    reject('Vino no encontrado'); 
+                }
+            });
+        }
 }
 
 module.exports = new ServicioVinos();

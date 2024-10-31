@@ -15,7 +15,7 @@ class ServicioVentas {
             if (ventas) {
                 resolve(ventas);
             } else {
-                reject(`Numero de ventas no encontradoss`);
+                reject(`Numero de venta no encontrado`);
             }
         });
     }
@@ -32,15 +32,26 @@ class ServicioVentas {
                 id_vino,
                 fecha_venta: new Date().toISOString()
             };
+
+                if (nueva_venta) {
+                    this._ventas.push(nueva_venta);
+                    resolve(this._ventas);
     
-            // Agregar la nueva venta al array
-            this._ventas.push(nueva_venta);
-    
-            // Resolver la promesa con la nueva venta
-            resolve(nueva_venta); // Solo devuelve la nueva venta
+                } 
         });
     }
-    
+
+    getByCliente(id_cliente) {
+        return new Promise((resolve, reject) => {
+            const ventasCliente = this._ventas.filter(v => v.id === id_cliente);
+            if (ventasCliente) {
+                resolve(ventasCliente);
+            }
+            else {
+                reject(ClienteID);
+            }
+        });
+    }   
 
     deleteById(id) {
         return new Promise((resolve, reject) => {
@@ -50,6 +61,53 @@ class ServicioVentas {
             }
             else {
                 reject(`No existe la venta con ${id}`);
+            }
+        });
+    }
+
+    getClientesFrecuentes() {
+        return new Promise((resolve) => {
+            const clientesFrecuentes = {};
+
+            // Contamos las ventas por cliente
+            this._ventas.forEach(venta => {
+                const { id_cliente } = venta;
+                if (!clientesFrecuentes[id_cliente]) {
+                    clientesFrecuentes[id_cliente] = 0; 
+                }
+                clientesFrecuentes[id_cliente]++; // Incrementa el contador de ventas
+            });
+
+            // Filtramos los clientes que tienen más de 2 ventas
+            const resultado = Object.keys(clientesFrecuentes)
+                .filter(clienteId => clientesFrecuentes[clienteId] > 2)
+                .map(clienteId => ({
+                    clienteId,
+                    totalVentas: clientesFrecuentes[clienteId]
+                }));
+
+            resolve(resultado);
+        });
+    }
+
+
+    getClientesInactivos() {
+        return new Promise((resolve) => {
+            const clientesConVentas = new Set(this._ventas.map(venta => venta.id_cliente));
+            const clientesInactivos = this._clientes.filter(cliente => !clientesConVentas.has(cliente.id));
+            resolve(clientesInactivos);
+        });
+    }
+
+    deleteById(id) {
+        return new Promise((resolve, reject) => {
+            const index = this._ventas.findIndex(v => v.id === id); // Busca a la venta
+    
+            if (index !== -1) {
+                this._ventas.splice(index, 1); // Se elimina la venta
+                resolve(); 
+            } else {
+                reject('Venta no encontrado');
             }
         });
     }
