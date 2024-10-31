@@ -1,7 +1,7 @@
 //Entidades
-const servicioVinos = require('./Entidades/ServicioVinos');
-const ServicioClientes = require('./Entidades/ServicioClientes');
-const ServicioVentas = require('./Entidades/ServicioVentas');
+const servicioVinos = require('./ServicioVinos');
+const ServicioClientes = require('./ServicioClientes');
+const ServicioVentas = require('./ServicioVentas');
 
 //Librerias
 const express = require('express');
@@ -21,9 +21,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 
-//Endpoint generico
-app.get('/', (req, res) => {
-    res.status(200).send('La API esta corriendo en el puerto 3000');
+//Endpoint generico, el primero
+app.use((req, res, next) => {
+    console.log(req.method, req.path);
+    next();
 });
 
 // Obtener todos los vinos
@@ -732,7 +733,7 @@ app.get('/v1/clientes/:id/ventas', async (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`La API esta corriendo en el puerto ${PORT}`);
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
 module.exports = server;
