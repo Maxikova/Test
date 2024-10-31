@@ -8,26 +8,27 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
+//Newrelic
+require('newrelic');
+
 //Variables Swagger
 const swaggerInfo = require('./SwaggerInfo');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = swaggerJSDoc(swaggerInfo);
 
-
 app.use(express.json());
 app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-
-//Endpoint generico, el primero
-app.use((req, res, next) => {
-    console.log(req.method, req.path);
-    next();
+//Endpoint generico
+app.get('/', (req, res) => {
+    res.status(200).send('La API esta corriendo en el puerto 3000');
 });
 
 // Obtener todos los vinos
+
 /**
  * @swagger
  * /v1/vinos:
@@ -60,45 +61,6 @@ app.get('/v1/vinos', async (req, res) => {
     res.json(vinos);
 });
 
-// Buscar vinos por criterios
-/**
- * @swagger
- * /v1/vinos/flitro:
- *   get:
- *     summary: Buscar los vinos por criterios
- *     tags: [Vinos]
- *     responses:
- *       200:
- *         description: Lista de vinos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   marca:
- *                     type: string
- *                   bodega:
- *                     type: string
- *                   año:
- *                     type: integer
- *                   precio:
- *                     type: number
- */
-app.get('/v1/vinos/filtro', async (req, res) => {
-    try {
-        let vinos = await servicioVinos.filterVinos(req.query);
-        res.json(vinos);
-    } catch(err) {
-        console.log(err);
-        res.status(404).end();
-    }
-});
-
-// Obtener vino por ID
 /**
  * @swagger
  * /v1/vinos/{id}:
@@ -133,6 +95,7 @@ app.get('/v1/vinos/filtro', async (req, res) => {
  *       404:
  *         description: Vino no encontrado
  */
+// Obtener vino por ID
 app.get('/v1/vinos/:id', async (req, res) => {
     try {
         let vinos = await servicioVinos.getById(req.params.id); 
@@ -178,7 +141,7 @@ app.post('/v1/vinos', async (req, res) => {
         return res.status(400).send('Faltan datos del vino');
     }
     let nuevoVino = await servicioVinos.add(req.query); 
-    res.status(201).send("Vino creado correctamente");
+    res.status(201).send("Vino creados correctamente");
 });
 
 // Actualizar un vino
@@ -228,6 +191,7 @@ app.put('/v1/vinos/:id', async (req, res) => {
     res.status(201).send('Vino actualizado correctamente');
 });
 
+// Eliminar un vino por ID
 /**
  * @swagger
  * /v1/vinos/{id}:
@@ -245,24 +209,16 @@ app.put('/v1/vinos/:id', async (req, res) => {
  *       204:
  *         description: Vino eliminado correctamente
  *       404:
- *         description: Vino inexistente
+ *         description: Vino no encontrado
  */
-app.delete('/v1/vinos/:id', async(req, res) => {
-    const id = parseInt(req.params.id);  
+app.delete('/v1/vinos/:id', async (req, res) => {
     try {
-      await servicioVinos.getById(req.params.id);
-      let vinos = await servicioVinos.deleteById(id);
-      
-      res.status(200).send('Vino eliminado correctamente');
-    } catch(error) {
-      console.log(error);
-      res.status(404).send("Vino inexistente");
-
+        let vinos = await servicioVinos.deleteById(req.params.id);
+        res.status(204).json(vinos);
+    } catch (error) {
+        res.status(404).send('Vino no encontrado');
     }
 });
-
-
-///Endpoints para el manejo de los clientes
 
 // Obtener todos los clientes
 /**
@@ -291,46 +247,6 @@ app.delete('/v1/vinos/:id', async(req, res) => {
 app.get('/v1/clientes', async (req, res) => {
     let clientes = await ServicioClientes.getAll();
     res.json(clientes);
-});
-
-//Obtengo los clientes frecuentes, indicando tambien el número de veces que compraron
-/**
- * @swagger
- * /v1/clientes/frecuentes:
- *   get:
- *     summary: Se obtienen los clientes con mas de una venta
- *     tags: [Clientes]
- *     responses:
- *      200:
- *         description: Lista de clientes
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   nombre:
- *                     type: string
- *                   sexo:
- *                     type: string
- *      404:
- *          description: No hay clientes frecuentes
- */
-app.get('/v1/clientes/frecuentes', async (req, res) => {
-    try {
-        let clientesFrecuentes = await ServicioVentas.getClientesFrecuentes();
-        if (clientesFrecuentes.length > 0) {
-            res.json(clientesFrecuentes);
-        } else {
-            res.status(404).json({ message: 'No hay clientes frecuentes.' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
 });
 
 // Obtener clientes por ID
@@ -374,7 +290,6 @@ app.get('/v1/clientes/:id', async (req, res) => {
     }
 });
 
-
 /**
  * @swagger
  * /v1/clientes:
@@ -400,6 +315,7 @@ app.get('/v1/clientes/:id', async (req, res) => {
  *       400:
  *         description: Faltan datos del cliente
  */
+
 app.post('/v1/clientes', async (req, res) => {
     const {nombre, sexo} = req.query;
     if (!nombre || !sexo )
@@ -410,7 +326,7 @@ app.post('/v1/clientes', async (req, res) => {
     res.status(201).send("Cliente creado correctamente");
 });
 
-// Actualizar datos de un cliente
+
 /**
  * @swagger
  * /v1/clientes/{id}:
@@ -442,6 +358,7 @@ app.post('/v1/clientes', async (req, res) => {
  *         description: Cliente no encontrado
  */
 
+// Actualizar datos de un cliente
 app.put('/v1/clientes/:id', async (req, res) => {
     const idCliente = req.params.id;
     let clienteActualizar = await ServicioClientes.getById(idCliente);
@@ -452,8 +369,8 @@ app.put('/v1/clientes/:id', async (req, res) => {
     res.status(201).send('Vino actualizado correctamente');
 });
 
-
 // Eliminar un cliente por ID
+
 /**
  * @swagger
  * /v1/clientes/{id}:
@@ -471,20 +388,17 @@ app.put('/v1/clientes/:id', async (req, res) => {
  *       200:
  *         description: Cliente eliminado correctamente
  *       404:
- *         description: Cliente inexistente
+ *         description: Cliente no encontrado
  */
-app.delete('/v1/clientes/:id', async(req, res) => {
-    const id = parseInt(req.params.id);  
+app.delete('/v1/clientes/:id', async (req, res) => {
     try {
-      await ServicioClientes.getById(req.params.id);
-      let clientes = await ServicioClientes.deleteById(id);
-      
-      res.status(200).send('Cliente eliminado correctamente');
-    } catch(error) {
-      console.log(error);
-      res.status(404).send("Cliente inexistente");
-
+        let clientes = await service.deleteById(req.params.id);
+        res.json(clientes);
+    } catch (error) {
+        res.status(404).send('Cliente no encontrado');
     }
+    // ServicioClientes.deleteById(req.params.id);
+    // res.status(204).end();
 });
 
 // Obtener todas las ventas
@@ -512,12 +426,14 @@ app.delete('/v1/clientes/:id', async(req, res) => {
  *                     type: number
  *                     format: float
  */
+
 app.get('/v1/ventas', async (req, res) => {
     let ventas = await ServicioVentas.getAll();
     res.json(ventas);
 });
 
 //Obtener venta por ID
+
 /**
  * @swagger
  * /v1/ventas/{id}:
@@ -549,6 +465,7 @@ app.get('/v1/ventas', async (req, res) => {
  *       404:
  *         description: Venta no encontrada
  */
+
 app.get('/v1/ventas/:id' , async(req,res) =>{
     try{
         let ventas = await ServicioVentas.getById(req.params.id);
@@ -561,46 +478,7 @@ app.get('/v1/ventas/:id' , async(req,res) =>{
 
 });
 
-//Agrego Venta
-/**
- * @swagger
- * /v1/ventas:
- *   post:
- *     summary: Registrar una nueva venta
- *     tags: [Ventas]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id_cliente:
- *                 type: integer
- *                 description: ID del cliente que realiza la compra
- *                 example: 1
- *               id_vino:
- *                 type: integer
- *                 description: ID del vino que se desea vender
- *                 example: 2
- *             required:
- *               - id_cliente
- *               - id_vino
- *     responses:
- *       201:
- *         description: Venta registrada con éxito
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Se registró la venta
- *       400:
- *         description: No están todos los datos para concretar la venta
- *       404:
- *         description: ID de cliente o ID de vino no encontrado
- *       500:
- *         description: Error interno del servidor
- */
+//Agregar Ventas
 app.post('/v1/ventas', async (req, res) => {
     const { id_cliente, id_vino } = req.body;
 
@@ -632,108 +510,11 @@ app.post('/v1/ventas', async (req, res) => {
     }
 });
 
-//Elimino una venta
-/**
- * @swagger
- * /v1/ventas/{id}:
- *   delete:
- *     summary: Eliminar una venta por ID
- *     tags: [Ventas]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID de la Venta
- *     responses:
- *       204:
- *         description: Venta eliminada correctamente
- *       404:
- *         description: Venta inexistente
- */
-app.delete('/v1/ventas/:id', async(req, res) => {
-    const id = parseInt(req.params.id);  
-    try {
-      await ServicioVentas.getById(req.params.id);
-      let ventas = await ServicioVentas.deleteById(id);
-      
-      res.status(200).send('Venta eliminada correctamente');
-    } catch(error) {
-      console.log(error);
-      res.status(404).send("Venta inexistente");
-
-    }
-});
-
-//Obtengo las ventas especificas de los clientes
-/**
- * @swagger
- * /v1/clientes/{id}/ventas:
- *   get:
- *     summary: Obtener todas las ventas de un cliente
- *     description: Devuelve una lista de todas las compras realizadas por un cliente específico.
- *     tags: 
- *       - Ventas
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del cliente
- *     responses:
- *       200:
- *         description: Lista de compras del cliente
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id_venta:
- *                     type: integer
- *                     description: ID de la venta
- *                     example: 123
- *                   id_vino:
- *                     type: integer
- *                     description: ID del vino comprado
- *                     example: 45
- *                   fecha:
- *                     type: string
- *                     format: date
- *                     description: Fecha de la venta
- *                     example: 2024-10-28
- *       404:
- *         description: Cliente no encontrado o error en la búsqueda de ventas
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Cliente no encontrado
- *       500:
- *         description: Error interno del servidor
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *               example: Error interno del servidor
- */
-app.get('/v1/clientes/:id/ventas', async (req, res) => {
-    try {
-        const id_cliente = parseInt(req.body.id, 10);
-        let compras = await ServicioVentas.getByCliente(req.body.id_cliente);
-        res.json(compras);
-    } catch (error) {
-        console.error(error);
-        res.status(404).end();
-    }
-});
 
 const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+const server = app.listen(PORT, () => {
+    console.log(`La API esta corriendo en el puerto ${PORT}`);
 });
+
 
 module.exports = server;
