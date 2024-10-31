@@ -18,6 +18,36 @@ class ServicioClientes {
         });
     }
 
+    // Busca vinos en base al criterio (nombre, bodega, año, precio)
+    filterVinos(consulta_vinos) {
+        return new Promise(resolve => {
+            const { nombre, bodega, año, precio } = consulta_vinos;
+
+            let resultados = this._vinos;
+
+            if (nombre) {
+                const nombres = nombre.split(',').map(n => n.trim().toLowerCase());
+                resultados = resultados.filter(v => nombres.includes(v.nombre.toLowerCase()));
+            }
+
+            if (bodega) {
+                const bodegas = bodega.split(',').map(b => b.trim().toLowerCase());
+                resultados = resultados.filter(v => bodegas.includes(v.bodega.toLowerCase()));
+            }
+
+            if (año) {
+                resultados = resultados.filter(v => v.año === parseInt(año));
+            } 
+
+            if (precio) {
+                resultados = resultados.filter(v => v.precio === parseInt(precio));
+            }
+
+            resolve(resultados);
+        });
+    }
+
+
     // Como cliente por el id
        getById(id) {
         return new Promise((resolve, reject) => {
@@ -26,7 +56,7 @@ class ServicioClientes {
             if (cliente) {
                 resolve(cliente);
             } else {
-                reject(`Cliente con ID ${id} no encontrado`);
+                reject(`Cliente con ID ${id} no encontrados`);
             }
         });
     }
@@ -61,6 +91,19 @@ class ServicioClientes {
                 resolve(this._clientes[index]);
             } else {
                 reject(`Cliente con ID ${id} no encontrado`);
+            }
+        });
+    }
+
+    deleteById(id) {
+        return new Promise((resolve, reject) => {
+            const index = this._clientes.findIndex(v => v.id === id); // Busca el cliente
+    
+            if (index !== -1) {
+                this._clientes.splice(index, 1); // Se elimina el cliente
+                resolve(); 
+            } else {
+                reject('Cliente no encontrado');
             }
         });
     }
