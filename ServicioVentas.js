@@ -47,9 +47,9 @@ class ServicioVentas {
             if (ventasCliente) {
                 resolve(ventasCliente);
             }
-            else {
-                reject(ClienteID);
-            }
+            // else {
+              //  reject(ClienteID);
+            //}
         });
     }   
 
@@ -69,16 +69,15 @@ class ServicioVentas {
         return new Promise((resolve) => {
             const clientesFrecuentes = {};
 
-            // Contamos las ventas por cliente
+            //Cuento las ventas por cliente
             this._ventas.forEach(venta => {
                 const { id_cliente } = venta;
                 if (!clientesFrecuentes[id_cliente]) {
-                    clientesFrecuentes[id_cliente] = 0; 
+                    clientesFrecuentes[id_cliente] = 0; // Inicializa el contador
                 }
                 clientesFrecuentes[id_cliente]++; // Incrementa el contador de ventas
             });
 
-            // Filtramos los clientes que tienen más de 2 ventas
             const resultado = Object.keys(clientesFrecuentes)
                 .filter(clienteId => clientesFrecuentes[clienteId] > 2)
                 .map(clienteId => ({
@@ -87,15 +86,6 @@ class ServicioVentas {
                 }));
 
             resolve(resultado);
-        });
-    }
-
-
-    getClientesInactivos() {
-        return new Promise((resolve) => {
-            const clientesConVentas = new Set(this._ventas.map(venta => venta.id_cliente));
-            const clientesInactivos = this._clientes.filter(cliente => !clientesConVentas.has(cliente.id));
-            resolve(clientesInactivos);
         });
     }
 

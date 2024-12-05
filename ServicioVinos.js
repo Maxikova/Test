@@ -18,10 +18,10 @@ class ServicioVinos {
         });
     }
 
-    // Busca vinos en base al criterio (nombre, bodega, año, precio)
+    // Busca vinos en base al criterio (nombre, año, bodega, precio)
     filterVinos(consulta_vinos) {
         return new Promise(resolve => {
-            const { nombre, bodega, año, precio } = consulta_vinos;
+            const { nombre, año, bodega, precio } = consulta_vinos;
 
             let resultados = this._vinos;
 
@@ -73,11 +73,11 @@ class ServicioVinos {
                 precio
             };
 
-            this._vinos.push(nuevoVino); 
-
-            setTimeout(() => {
+            if (nuevoVino) {
+                this._vinos.push(nuevoVino);
                 resolve(nuevoVino);
-            }, 100);
+
+            } 
         });
     }
 
@@ -96,7 +96,7 @@ class ServicioVinos {
         });
     }
 
-    //Elimina el vino
+
         deleteById(id) {
             return new Promise((resolve, reject) => {
                 const index = this._vinos.findIndex(v => v.id === id); // Busca el vino
