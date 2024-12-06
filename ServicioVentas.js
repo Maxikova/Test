@@ -97,7 +97,7 @@ class ServicioVentas {
                 this._ventas.splice(index, 1); // Se elimina la venta
                 resolve(); 
             } else {
-                reject('Venta no encontrado')
+                reject('Venta no encontrado');
             }
         });
     }
