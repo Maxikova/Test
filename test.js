@@ -14,7 +14,7 @@ test('GET / - Verifico que el servidor funcione y responda con un 200', async t 
 });
 
 // Test para obtener los vinos
-test('GET /v1/vinos - Obtengo todos los vino', async t => {
+test('GET /v1/vinos - Obtengo todos los vinos', async t => {
   const response = await request(server).get('/v1/vinos');
   t.is(response.status, 200);
   t.true(Array.isArray(response.body));
