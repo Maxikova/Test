@@ -179,7 +179,7 @@ app.post('/v1/vinos', async (req, res) => {
     }
     //let nuevoVino = await servicioVinos.add(req.query);
     
-    await ServicioVinos.add({nombre,año,bodega,precio});
+    await servicioVinos.add({nombre,año,bodega,precio});
     res.status(201).send("Vino creado correctamente");
 });
 
@@ -739,11 +739,10 @@ app.get('/v1/clientes/:id/ventas', async (req, res) => {
     }
 });
 
-const PORT = 3000;
+const PORT = 4000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 
 });
-
 
 module.exports = server;
