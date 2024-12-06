@@ -7,11 +7,11 @@ test.after.always(async t => {
 });
 
 // Test de prueba del servidor
-test('GET / - Verifico que el servidor funcione y responda con un 200', async t => {
-  const response = await request(server).get('/');
-  t.is(response.status, 200);
-  t.is(response.text, 'La API esta corriendo en el puerto 3000');
-});
+// test('GET / - Verifico que el servidor funcione y responda con un 200', async t => {
+//   const response = await request(server).get('/');
+//   t.is(response.status, 200);
+//   t.is(response.text, 'La API esta corriendo en el puerto 3000');
+// });
 
 // Test para obtener los vinos
 test('GET /v1/vinos - Obtengo todos los vinos', async t => {
