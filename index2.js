@@ -739,10 +739,12 @@ app.get('/v1/clientes/:id/ventas', async (req, res) => {
     }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
 
+
+const PORT = 3000;
+const server = app.listen(PORT, () => {
+    console.log(`La API esta corriendo en el puerto ${PORT}`);
 });
+
 
 module.exports = server;
