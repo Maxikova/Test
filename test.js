@@ -1,6 +1,6 @@
 const test = require('ava');
 const request = require('supertest');
-const server = require('./index2');
+const server = require('./index2.js');
 
 test.after.always(async t => {
   server.close(); // Esto es para cerrar el servidor cuando finaliza el test
