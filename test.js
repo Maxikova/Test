@@ -14,7 +14,11 @@ test('GET / - Verifico que el servidor funcione y responda con un 200', async t 
 });
 
 // Test para obtener los vinos
+<<<<<<< Updated upstream
 test('GET /v1/vinos - Obtengo todos lo vinos', async t => {
+=======
+test('GET /v1/vinos - Obtengo todos loss vinos', async t => {
+>>>>>>> Stashed changes
   const response = await request(server).get('/v1/vinos');
   t.is(response.status, 200);
   t.true(Array.isArray(response.body));
